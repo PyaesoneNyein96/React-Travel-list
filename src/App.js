@@ -1,9 +1,14 @@
+import { useState } from "react";
+
+// /* eslint-disable */
+
+
 const initialItems = [
   { id: 1, description: "Passports", quantity: 1, packed: false },
-  { id: 2, description: "show money", quantity: "30k baht", packed: false },
+  { id: 2, description: "show money", quantity: "30k", packed: false },
   { id: 3, description: "Laptop", quantity: 1, packed: true },
-  { id: 3, description: "Phone", quantity: 1, packed: true },
-  { id: 3, description: "Programming Skill", quantity: "10+", packed: true },
+  { id: 4, description: "Phone", quantity: 1, packed: true },
+  // { id: 5, description: "Programming Skill", quantity: "10+", packed: true },
 ];
 
 export default function App() {
@@ -22,10 +27,38 @@ function Logo() {
 }
 
 function Form() {
+
+  const [description, setDescription] = useState('opps');
+  const [quantity, setQuantity] = useState(2);
+
+  function SubmitHandle(e) {
+    e.preventDefault();
+
+    const newItem = {
+      description,
+      quantity,
+      package: false,
+      id: Date.now()
+    };
+
+    console.log(newItem);
+  }
+
   return (
-    <div className="add-form">
+    <form className="add-form" onSubmit={SubmitHandle}>
       <h3>What do you need for your Thailand trip.</h3>
-    </div>
+      <select value={quantity} onChange={e => setQuantity(q => Number(e.target.value))}>
+        {
+          Array.from({ length: 20 }, (_, i) => i + 1).map(num => (
+            <option value={num} key={num} >
+              {num}
+            </option>
+          ))
+        }
+      </select>
+      <input type="text" placeholder="Item . . ." value={description} onChange={(e) => setDescription(s => e.target.value)} />
+      <button> Add </button>
+    </form>
   )
 }
 
