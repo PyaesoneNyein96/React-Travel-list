@@ -3,7 +3,7 @@ import { useState } from "react";
 // /* eslint-disable */
 
 
-const initialItems = [
+let initialItems = [
   { id: 1, description: "Passports", quantity: 1, packed: false },
   { id: 2, description: "show money", quantity: "30k", packed: false },
   { id: 3, description: "Laptop", quantity: 1, packed: true },
@@ -12,10 +12,22 @@ const initialItems = [
 ];
 
 export default function App() {
+
+  const [items, setItems] = useState(initialItems);
+
+  function handleAddItems(item) {
+    setItems(items => [...items, item]);
+  }
+
+  function handleDeleteItem(id) {
+    console.log(id)
+    setItems(items => items.filter(i => i.id !== id));
+  }
+
   return <div>
     <Logo />
-    <Form />
-    <PackageList />
+    <Form onAddItem={handleAddItems} />
+    <PackageList onDelete={handleDeleteItem} items={items} />
     <Stats />
   </div>
 }
@@ -26,14 +38,16 @@ function Logo() {
   return <h1>🛫 Road to Thailand 💻 </h1>;
 }
 
-function Form() {
+function Form({ onAddItem }) {
 
   const [description, setDescription] = useState('opps');
   const [quantity, setQuantity] = useState(2);
 
+
   function SubmitHandle(e) {
     e.preventDefault();
 
+    if (!description) return;
     const newItem = {
       description,
       quantity,
@@ -41,7 +55,13 @@ function Form() {
       id: Date.now()
     };
 
-    console.log(newItem);
+
+    onAddItem(newItem);
+
+    setDescription('');
+    setQuantity(1);
+
+    // initialItems.push()
   }
 
   return (
@@ -63,25 +83,25 @@ function Form() {
 }
 
 
-function PackageList() {
+function PackageList({ items, onDelete }) {
   return (
     <div className="list">
       <ul >
-        {initialItems.map((item) => (
-          <Item item={item} key={item.id} />
+        {items.map((item) => (
+          <Item item={item} key={item.id} onDeleteItem={onDelete} />
         ))}
       </ul>
     </div>
   )
 }
 
-function Item({ item }) {
+function Item({ item, onDeleteItem }) {
   return (
     <li>
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span >
-      <button> ❌ </button>
+      <button onClick={() => onDeleteItem(item.id)}> ❌ </button>
     </li>
   )
 }
